@@ -151,11 +151,12 @@ jobs:
           fi
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           REPO="${{ github.repository }}"
-          USER="${{ github.actor }}"
+          USER_ACTOR="${{ github.actor }}" # Menggunakan nama variabel yang berbeda untuk menghindari konflik
           LEVEL="${{ env.LEVEL_NAME }}"
           SCORE="${{ env.SCORE }}"
-          JSON=$(jq -nc --arg timestamp "$TIMESTAMP" --arg repo "$REPO" --arg user "$USER" --arg level "$LEVEL" --arg score "$SCORE" \
-            '{timestamp: $timestamp, repo: $repo, user: $USER, level: $level, score: $score}')
+          # --- PERBAIKAN DI SINI: Menggunakan $user (lowercase) di dalam filter jq ---
+          JSON=$(jq -nc --arg timestamp "$TIMESTAMP" --arg repo "$REPO" --arg user "$USER_ACTOR" --arg level "$LEVEL" --arg score "$SCORE" \
+            '{timestamp: $timestamp, repo: $repo, user: $user, level: $level, score: $score}')
           curl -X POST "$SHEETBEST_URL" \
             -H "Content-Type: application/json" \
             -d "$JSON"
